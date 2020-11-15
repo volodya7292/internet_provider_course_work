@@ -10,43 +10,76 @@
 </head>
 
 <body>
-    <h3>Customers</h3>
-    <select onchange="onCustomerChange(this)">
-        {% for customer in customers %}
-        <option {% if customer.id == selected_customer.id %}selected{% endif %}>{{customer.name}}</option>
-        {% endfor %}
-    </select>
 
-    <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-        <p>Create tariff</p>
-        <form action="create_tariff" method="POST">
-            {% csrf_token %}
-            <table>
-                {{create_tariff_form}}
-            </table>
-            <input type="submit" value="Create">
-        </form>
+    <div style="display: flex; flex-wrap: wrap;">
+        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
+            <p>Create tariff</p>
+            <form action="create_tariff" method="POST">
+                {% csrf_token %}
+                <table>
+                    {{create_tariff_form}}
+                </table>
+                <input type="submit" value="Create">
+            </form>
+        </div>
+
+        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
+            <p>Deactivate tariff</p>
+            <form action="deactivate_tariff" method="POST">
+                {% csrf_token %}
+                <table>
+                    {{deactivate_tariff_form}}
+                </table>
+                <input type="submit" value="Deactivate">
+            </form>
+            {% comment %} <select>
+                {% for tariff in tariffs %}
+                <option>{{tariff.name}}</option>
+                {% endfor %}
+            </select>
+            <input type="button" value="Deactivate"> {% endcomment %}
+        </div>
+
+        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
+            <p>Create customer</p>
+            <form action="create_customer" method="POST">
+                {% csrf_token %}
+                <table>
+                    {{create_customer_form}}
+                </table>
+                <input type="submit" value="Create">
+            </form>
+        </div>
+
+        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
+            <p>Create service</p>
+            <form action="create_service" method="POST">
+                {% csrf_token %}
+                <table>
+                    {{create_service_form}}
+                </table>
+                <input type="submit" value="Create">
+            </form>
+        </div>
+
+        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
+            <p>Customer info</p>
+            <select onchange="onCustomerChange(this)">
+                {% for customer in customers %}
+                <option value="{{customer.id}}">{{customer.name}}</option>
+                {% endfor %}
+            </select>
+            <div id="customer_info" style="visibility: collapse">
+                <p>Name: <span id="customer_name"></span></p>
+                <p>Address: <span id="customer_address"></span></p>
+                <p>Phone: <span id="customer_phone"></span></p>
+                <p>Email: <span id="customer_email"></span></p>
+                <p>Balance: <span id="customer_balance"></span> UAH</p>
+            </div>
+        </div>
     </div>
 
-    <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-        <p>Deactivate tariff</p>
-        <form action="deactivate_tariff" method="POST">
-            {% csrf_token %}
-            <table>
-                {{deactivate_tariff_form}}
-            </table>
-            <input type="submit" value="Deactivate">
-        </form>
-        {% comment %} <select>
-            {% for tariff in tariffs %}
-            <option>{{tariff.name}}</option>
-            {% endfor %}
-        </select>
-        <input type="button" value="Deactivate"> {% endcomment %}
-    </div>
-
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static 'main/dashboard_worker.js' %}"></script>
 </body>
 
