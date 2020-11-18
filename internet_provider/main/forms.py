@@ -33,4 +33,4 @@ class CreateServiceForm(forms.ModelForm):
         self.fields['tariff'].queryset = Tariff.objects.filter(active=True)
 
 class DeactivateTariffForm(forms.Form):
-    tariff = forms.ModelChoiceField(queryset=Tariff.objects.all())
+    tariff = forms.ModelChoiceField(queryset=Tariff.objects.filter(active=True))

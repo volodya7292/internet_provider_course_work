@@ -10,7 +10,6 @@
 </head>
 
 <body>
-
     <div style="display: flex; flex-wrap: wrap;">
         <div style="padding: 10px; width: fit-content; border: 1px solid black;">
             <p>Create tariff</p>
@@ -32,12 +31,7 @@
                 </table>
                 <input type="submit" value="Deactivate">
             </form>
-            {% comment %} <select>
-                {% for tariff in tariffs %}
-                <option>{{tariff.name}}</option>
-                {% endfor %}
-            </select>
-            <input type="button" value="Deactivate"> {% endcomment %}
+            <input type="button" value="Deactivate">
         </div>
 
         <div style="padding: 10px; width: fit-content; border: 1px solid black;">
@@ -64,10 +58,7 @@
 
         <div style="padding: 10px; width: fit-content; border: 1px solid black;">
             <p>Customer info</p>
-            <select onchange="onCustomerChange(this)">
-                {% for customer in customers %}
-                <option value="{{customer.id}}">{{customer.name}}</option>
-                {% endfor %}
+            <select id="customers" onchange="onCustomerChange(this)">
             </select>
             <div id="customer_info" style="visibility: collapse">
                 <p>Name: <span id="customer_name"></span></p>
@@ -75,6 +66,13 @@
                 <p>Phone: <span id="customer_phone"></span></p>
                 <p>Email: <span id="customer_email"></span></p>
                 <p>Balance: <span id="customer_balance"></span> UAH</p>
+
+                <div id="customer_services_info">
+                    <select id="customer_services" onchange="onCustomerServiceChange(this)">
+                    </select>
+
+                    <p>Static IP: <span id="customer_service_static_ip"></span></p>
+                </div>
             </div>
         </div>
     </div>
