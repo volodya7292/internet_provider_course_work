@@ -2,7 +2,7 @@ let customers = [];
 let customer_services = [];
 
 $.ajax({
-    type: 'get',
+    type: 'GET',
     url: "get_customers",
     data: {},
     success: function (response) {
@@ -27,13 +27,14 @@ $.ajax({
 function onCustomerChange() {
     const obj = customers[document.getElementById("customers").value];
 
+    $("#customer_info_panel").css("visibility", "visible");
     $("#customer_info").css("visibility", "visible");
 
     $("#customer_name").text(obj.fields.name);
     $("#customer_address").text(obj.fields.address);
     $("#customer_phone").text(obj.fields.phone);
-    $("#customer_email").text(obj.fields.email);
-    $("#customer_balance").text(obj.fields.balance);
+    $("#customer_username").text(obj.fields.user[0]);
+    $("#customer_balance").text(obj.fields.balance + " UAH");
 
     $("#customer_services_info").css("visibility", "collapse");
 
@@ -65,6 +66,15 @@ function onCustomerChange() {
 function onCustomerServiceChange() {
     const obj = customer_services[document.getElementById("customer_services").value];
     $("#customer_service_static_ip").text(obj.fields.static_ip ? "Yes" : "No");
+    $("#customer_service_traffic").text(Math.floor(obj.fields.traffic / 1e6) + " МБ");
+    $("#customer_tariff_name").text(obj.fields.tariff.name);
+    $("#customer_tariff_price").text(obj.fields.tariff.price + " UAH");
+    $("#customer_tariff_speed").text(obj.fields.tariff.speed + " MBit/s");
+    $("#customer_tariff_desc").text(obj.fields.tariff.description);
+
+    const limit = obj.fields.tariff.limit;
+    $("#customer_tariff_limit").text(limit >= 9999999 ? "Unlimited" : (limit + " МB"));
+
 }
 
 

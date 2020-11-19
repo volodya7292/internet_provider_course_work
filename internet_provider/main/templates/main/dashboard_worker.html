@@ -11,70 +11,168 @@
 
 <body>
     <div style="display: flex; flex-wrap: wrap;">
-        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-            <p>Create tariff</p>
+        <div class="comp">
+            <p class="comp_title">Create tariff</p>
             <form action="create_tariff" method="POST">
                 {% csrf_token %}
-                <table>
-                    {{create_tariff_form}}
+
+                <table style="width: 100%;">
+                    <tbody>
+                        {% for field in create_tariff_form %}
+                        <tr>
+                            <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                            <td>{{field}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+
                 <input type="submit" value="Create">
             </form>
         </div>
 
-        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-            <p>Deactivate tariff</p>
+        <div class="comp">
+            <p class="comp_title">Deactivate tariff</p>
             <form action="deactivate_tariff" method="POST">
                 {% csrf_token %}
-                <table>
-                    {{deactivate_tariff_form}}
+
+                <table style="width: 100%;">
+                    <tbody>
+                        {% for field in deactivate_tariff_form %}
+                        <tr>
+                            <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                            <td>{{field}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+
                 <input type="submit" value="Deactivate">
             </form>
-            <input type="button" value="Deactivate">
         </div>
 
-        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-            <p>Create customer</p>
+        <div class="comp">
+            <p class="comp_title">Create customer</p>
             <form action="create_customer" method="POST">
                 {% csrf_token %}
-                <table>
-                    {{create_customer_form}}
+
+                <table style="width: 100%;">
+                    <tbody>
+                        {% for field in create_customer_form %}
+                        <tr>
+                            <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                            <td>{{field}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+
                 <input type="submit" value="Create">
             </form>
         </div>
 
-        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-            <p>Create service</p>
+        <div class="comp">
+            <p class="comp_title">Create service</p>
             <form action="create_service" method="POST">
                 {% csrf_token %}
-                <table>
-                    {{create_service_form}}
+                <table style="width: 100%;">
+                    <tbody>
+                        {% for field in create_service_form %}
+                        <tr>
+                            <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                            <td>{{field}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+
                 <input type="submit" value="Create">
             </form>
         </div>
 
-        <div style="padding: 10px; width: fit-content; border: 1px solid black;">
-            <p>Customer info</p>
-            <select id="customers" onchange="onCustomerChange(this)">
-            </select>
-            <div id="customer_info" style="visibility: collapse">
-                <p>Name: <span id="customer_name"></span></p>
-                <p>Address: <span id="customer_address"></span></p>
-                <p>Phone: <span id="customer_phone"></span></p>
-                <p>Email: <span id="customer_email"></span></p>
-                <p>Balance: <span id="customer_balance"></span> UAH</p>
+        <div id="customer_info_panel" style="visibility: collapse">
+            <div class="comp">
+                <p class="comp_title">Customer info</p>
+                <select id="customers" style="padding: 2px 5px; margin-bottom: 5px;" onchange="onCustomerChange()">
+                </select>
+                <div id="customer_info" style="visibility: collapse">
+                    <table style="width: 100%;">
+                        <col width="80">
+                        <tr>
+                            <td>Name:</td>
+                            <td><span id="customer_name"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Address:</td>
+                            <td><span id="customer_address"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Phone:</td>
+                            <td><span id="customer_phone"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Username:</td>
+                            <td><span id="customer_username"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Balance:</td>
+                            <td><span id="customer_balance"></span></td>
+                        </tr>
+                    </table>
 
-                <div id="customer_services_info">
-                    <select id="customer_services" onchange="onCustomerServiceChange(this)">
-                    </select>
+                    <div id="customer_services_info"
+                        style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
+                        <p style="padding-bottom: 5px; font-size: 1.2rem;">Services</p>
+                        <select id="customer_services" onchange="onCustomerServiceChange()">
+                        </select>
 
-                    <p>Static IP: <span id="customer_service_static_ip"></span></p>
+                        <table style="width: 100%;">
+                            <col width="80">
+                            <tr>
+                                <td>Static IP:</td>
+                                <td><span id="customer_service_static_ip"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Traffic:</td>
+                                <td><span id="customer_service_traffic"></span></td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
+                            <p style="padding-bottom: 3px; font-size: 1.1rem">Tariff</p>
+                            <div id="tariff_info">
+                                <table style="width: 100%;">
+                                    <col width="90">
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td><span id="customer_tariff_name"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Price:</td>
+                                        <td><span id="customer_tariff_price"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Speed:</td>
+                                        <td><span id="customer_tariff_speed"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Limit:</td>
+                                        <td><span id="customer_tariff_limit"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Description:</td>
+                                        <td><span id="customer_tariff_desc"></span></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <form action="logout">
+            <input type="submit" value="Sign out" style="margin: 10px; padding: 2px 5px; height: fit-content">
+        </form>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

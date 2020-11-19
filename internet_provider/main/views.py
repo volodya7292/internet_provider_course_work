@@ -1,10 +1,12 @@
+from django.contrib.auth.models import User, Group
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Customer, Service, Tariff
-from .forms import CreateCustomerForm, CreateServiceForm, CreateTariffForm, DeactivateTariffForm, LoginForm
+from .forms import CreateCustomerForm, CreateServiceForm, CreateTariffForm, DeactivateTariffForm, LoginForm, SwitchTariffForm, TopUpBalanceForm
 from django.core import serializers
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+import decimal
 
 
 def login(request):
@@ -20,6 +22,11 @@ def login(request):
         return render(request, 'main/login.html', {'form': LoginForm()})
 
 
+def logout(request):
+    auth_logout(request)
+    return redirect('/')
+
+
 @login_required
 def dashboard(request):
     if request.user.groups.filter(name='Worker').exists():
@@ -27,15 +34,21 @@ def dashboard(request):
             'create_tariff_form': CreateTariffForm(auto_id=False), 'create_customer_form': CreateCustomerForm(auto_id=False),
             'create_service_form': CreateServiceForm(auto_id=False), 'deactivate_tariff_form': DeactivateTariffForm(auto_id=False)})
     else:
-        return render(request, 'main/dashboard_customer.html', {})
+        customer = Customer.objects.get(user=request.user)
+        services = Service.objects.filter(customer=customer)
+        top_up_balance_form = TopUpBalanceForm()
+        switch_tariff_form = SwitchTariffForm()
+        return render(request, 'main/dashboard_customer.html',
+                      {'customer': customer, 'services': services,
+                       'top_up_balance_form': top_up_balance_form, 'switch_tariff_form': switch_tariff_form})
 
 
 @login_required
 def get_customers(request):
     if request.user.groups.filter(name='Worker').exists():
         if request.is_ajax and request.method == 'GET':
-            customers = Customer.objects.all()
-            return JsonResponse(serializers.serialize("json", customers), safe=False, status=200)
+            customers = Customer.objects.prefetch_related('user').all()
+            return JsonResponse(serializers.serialize("json", customers, use_natural_foreign_keys=True), safe=False, status=200)
         else:
             return HttpResponse(status=400)
     else:
@@ -46,12 +59,12 @@ def get_customers(request):
 def get_customer(request):
     if request.user.groups.filter(name='Worker').exists():
         if request.is_ajax and request.method == 'GET':
-            try:
-                customer = Customer.objects.values(
-                    'id', 'name', 'address', 'phone', 'email', 'balance').get(id=request.GET.get('id', None))
-                return JsonResponse(customer, safe=False, status=200)
-            except Customer.DoesNotExist:
-                return JsonResponse(status=400)
+            # try:
+            #     customer = Customer.objects.values(
+            #         'id', 'name', 'address', 'phone', 'balance').get(id=request.GET.get('id', None))
+            #     return JsonResponse(customer, safe=False, status=200)
+            # except Customer.DoesNotExist:
+            return JsonResponse(status=400)
         else:
             return HttpResponse(status=400)
     else:
@@ -71,19 +84,39 @@ def get_customer_services(request):
         return HttpResponse(status=403)
 
 
-@ login_required
+@login_required
+def get_service(request):
+    if request.user.groups.filter(name='Customer').exists():
+        if request.is_ajax and request.method == 'GET':
+            customer = Customer.objects.get(user=request.user)
+            service = Service.objects.get(id=request.GET.get(
+                'service_id', None), customer=customer)
+            return JsonResponse(serializers.serialize("json", [service, ], use_natural_foreign_keys=True), safe=False, status=200)
+        else:
+            return HttpResponse(status=400)
+    else:
+        return HttpResponse(status=403)
+
+
+@login_required
 def create_customer(request):
     if request.user.groups.filter(name='Worker').exists():
         form = CreateCustomerForm(request.POST)
         if not form.is_valid():
             return HttpResponse(status=400)
-        form.save()
+        user = User.objects.create_user(
+            username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+
+        Customer.objects.create(
+            name=form.cleaned_data['name'], address=form.cleaned_data['address'], phone=form.cleaned_data['phone'], user=user)
+        Group.objects.get(name='Customer').user_set.add(user)
+
         return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponse(status=403)
 
 
-@ login_required
+@login_required
 def create_tariff(request):
     if request.user.groups.filter(name='Worker').exists():
         form = CreateTariffForm(request.POST)
@@ -95,7 +128,7 @@ def create_tariff(request):
         return HttpResponse(status=403)
 
 
-@ login_required
+@login_required
 def create_service(request):
     if request.user.groups.filter(name='Worker').exists():
         form = CreateServiceForm(request.POST)
@@ -107,7 +140,7 @@ def create_service(request):
         return HttpResponse(status=403)
 
 
-@ login_required
+@login_required
 def create_payment(request):
     if request.user.groups.filter(name='Worker').exists():
         return HttpResponse(status=204)
@@ -115,7 +148,7 @@ def create_payment(request):
         return HttpResponse(status=403)
 
 
-@ login_required
+@login_required
 def deactivate_tariff(request):
     if request.user.groups.filter(name='Worker').exists():
         form = DeactivateTariffForm(request.POST)
@@ -123,6 +156,38 @@ def deactivate_tariff(request):
             return HttpResponse(status=400)
         Tariff.objects.filter(
             id=form.cleaned_data['tariff'].id).update(active=False)
+        return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponse(status=403)
+
+
+@login_required
+def top_up_balance(request):
+    if request.user.groups.filter(name='Customer').exists():
+        try:
+            customer = Customer.objects.get(user=request.user)
+            customer.balance += decimal.Decimal(request.POST.get('amount', 0))
+            customer.save()
+        except Service.DoesNotExist:
+            return JsonResponse(status=400)
+        return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponse(status=403)
+
+
+@login_required
+def switch_tariff(request):
+    if request.user.groups.filter(name='Customer').exists():
+        try:
+            form = SwitchTariffForm(request.POST)
+            if not form.is_valid():
+                return HttpResponse(status=400)
+            service = Service.objects.get(
+                id=request.POST.get('service_id', None))
+            service.tariff = form.cleaned_data['new_tariff']
+            service.save()
+        except Service.DoesNotExist:
+            return JsonResponse(status=400)
         return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponse(status=403)

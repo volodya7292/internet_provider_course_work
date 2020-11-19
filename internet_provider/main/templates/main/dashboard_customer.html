@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'main/style.css' %}" rel="stylesheet">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div style="position: absolute; margin: auto; top: 0; right: 0; bottom: 0; left: 0; width: 300px; height: 620px">
+        <div class="comp">
+            <p class="comp_title">Customer info</p>
+            <div id="customer_info">
+                <table style="width: 100%;">
+                    <col width="80">
+                    <tr>
+                        <td>Name:</td>
+                        <td>{{customer.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Address:</td>
+                        <td>{{customer.address}}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone:</td>
+                        <td>{{customer.phone}}</td>
+                    </tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td>{{customer.user.username}}</td>
+                    </tr>
+                    <tr>
+                        <td>Balance:</td>
+                        <td>{{customer.balance}}</td>
+                    </tr>
+                </table>
+
+                {% if services|length > 0 %}
+                <div id="customer_services_info"
+                    style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
+                    <p style="padding-bottom: 5px; font-size: 1.2rem;">Services</p>
+                    <select id="customer_services" onchange="onCustomerServiceChange()">
+                        {% for service in services %}
+                        <option value="{{service.id}}">{{service.address}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <table style="width: 100%;">
+                        <col width="80">
+                        <tr>
+                            <td>Static IP:</td>
+                            <td><span id="customer_service_static_ip"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Traffic:</td>
+                            <td><span id="customer_service_traffic"></span></td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
+                        <p style="padding-bottom: 3px; font-size: 1.1rem">Tariff</p>
+                        <div id="tariff_info">
+                            <table style="width: 100%;">
+                                <col width="90">
+                                <tr>
+                                    <td>Name:</td>
+                                    <td><span id="customer_tariff_name"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Price:</td>
+                                    <td><span id="customer_tariff_price"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Speed:</td>
+                                    <td><span id="customer_tariff_speed"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Limit:</td>
+                                    <td><span id="customer_tariff_limit"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Description:</td>
+                                    <td><span id="customer_tariff_desc"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top: 15px; padding: 5px; border: 1px solid lightgray; border-radius: 10px; overflow: auto">
+                        <p style="padding-bottom: 7px; font-size: 1.1rem">Switch tariff</p>
+
+                        <form action="switch_tariff" method="POST">
+                            {% csrf_token %}
+
+                            <input id="service_id" type="hidden" name="service_id" style="width: 100px">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    {% for field in switch_tariff_form %}
+                                    <tr>
+                                        <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                                        <td>{{field}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <input type="submit" value='Switch'>
+                        </form>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
+                    <p style="padding-bottom: 7px; font-size: 1.1rem">Top up balance</p>
+
+                    <form action="top_up_balance" method="POST">
+                        {% csrf_token %}
+                        <input type="number" name="amount" style="width: 100px"><span> UAH</span>
+                        <input type="submit" value='Top up' style="padding: 0; margin: 0">
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <form action="logout">
+            <input type="submit" value="Sign out" style="margin: 10px; padding: 2px 5px; height: fit-content">
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'main/dashboard_customer.js' %}"></script>
+</body>
+
+</html>

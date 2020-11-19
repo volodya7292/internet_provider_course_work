@@ -1,18 +1,47 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'main/style.css' %}" rel="stylesheet">
     <title>Login</title>
+    <style>
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .form-group input {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 95%;
+            height: 25px;
+            margin: 10px 10px 10px 0;
+            padding-left: 5px;
+        }
+
+        input[type=submit] {
+            float: right;
+            padding: 2px 5px;
+        }
+    </style>
 </head>
 
 <body>
-    <form method="POST">
-        {% csrf_token %}
-        {{form}}
-        <input type="submit" value="Sign in">
-    </form>
+    <div class="comp"
+        style="position: absolute; margin: auto; top: 0; right: 0; bottom: 0; left: 0; width: 220px; height: 200px">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                {{field.label_tag}}
+                {{field}}
+            </div>
+            {% endfor %}
+            <input type="submit" value="Sign in">
+        </form>
+    </div>
 </body>
 
 </html>
