@@ -13,6 +13,15 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return {
+            'name': self.name,
+            'address': self.address,
+            'phone': self.phone,
+            'balance': self.balance,
+            'user': [self.user.username, ],
+        }
+
 
 class PaymentHistory(models.Model):
     id = models.AutoField(primary_key=True)

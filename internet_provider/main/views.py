@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import Customer, Service, Tariff
+from .models import Customer, PaymentHistory, Service, Tariff
 from .forms import CreateCustomerForm, CreateServiceForm, CreateTariffForm, DeactivateTariffForm, LoginForm, SwitchTariffForm, TopUpBalanceForm
 from django.core import serializers
 from django.shortcuts import redirect, render
@@ -75,8 +75,8 @@ def get_customer(request):
 def get_customer_services(request):
     if request.user.groups.filter(name='Worker').exists():
         if request.is_ajax and request.method == 'GET':
-            services = Service.objects.prefetch_related('tariff').filter(
-                customer_id=request.GET.get('customer_id', None)).only(*Service.get_fields())
+            services = Service.objects.prefetch_related('customer', 'tariff').filter(
+                customer_id=request.GET.get('customer_id', 0)).only(*Service.get_fields())
             return JsonResponse(serializers.serialize("json", services, use_natural_foreign_keys=True), safe=False, status=200)
         else:
             return HttpResponse(status=400)
@@ -90,7 +90,7 @@ def get_service(request):
         if request.is_ajax and request.method == 'GET':
             customer = Customer.objects.get(user=request.user)
             service = Service.objects.get(id=request.GET.get(
-                'service_id', None), customer=customer)
+                'service_id', 0), customer=customer)
             return JsonResponse(serializers.serialize("json", [service, ], use_natural_foreign_keys=True), safe=False, status=200)
         else:
             return HttpResponse(status=400)
@@ -166,16 +166,39 @@ def top_up_balance(request):
     if request.user.groups.filter(name='Customer').exists():
         try:
             customer = Customer.objects.get(user=request.user)
-            customer.balance += decimal.Decimal(request.POST.get('amount', 0))
+            amount_decimal = decimal.Decimal(request.POST.get('amount', 0))
+            customer.balance += amount_decimal
             customer.save()
+            PaymentHistory.objects.create(
+                customer=customer, income_expense=amount_decimal, balance=customer.balance, comment="Поповнення рахунку.")
         except Service.DoesNotExist:
-            return JsonResponse(status=400)
+            return HttpResponse(status=400)
         return HttpResponseRedirect('/dashboard')
     else:
         return HttpResponse(status=403)
 
 
 @login_required
+def pay_for_tariff(request):
+    if request.user.groups.filter(name='Customer').exists():
+        try:
+            customer = Customer.objects.get(user=request.user)
+            price = Service.objects.get(
+                id=request.POST.get('service_id', 0)).tariff.price
+            if customer.balance < price:
+                return JsonResponse(status=400)
+            customer.balance -= price
+            customer.save()
+            PaymentHistory.objects.create(
+                customer=customer, income_expense=-price, balance=customer.balance, comment="Списання за послуги тарифу.")
+        except Service.DoesNotExist:
+            pass
+        return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponse(status=403)
+
+
+@ login_required
 def switch_tariff(request):
     if request.user.groups.filter(name='Customer').exists():
         try:
@@ -183,11 +206,24 @@ def switch_tariff(request):
             if not form.is_valid():
                 return HttpResponse(status=400)
             service = Service.objects.get(
-                id=request.POST.get('service_id', None))
+                id=request.POST.get('service_id', 0))
             service.tariff = form.cleaned_data['new_tariff']
             service.save()
         except Service.DoesNotExist:
             return JsonResponse(status=400)
         return HttpResponseRedirect('/dashboard')
+    else:
+        return HttpResponse(status=403)
+
+
+@ login_required
+def get_payment_history(request):
+    if request.user.groups.filter(name='Customer').exists():
+        if request.is_ajax and request.method == 'GET':
+            customer = Customer.objects.get(user=request.user)
+            history = PaymentHistory.objects.filter(customer=customer)
+            return JsonResponse(serializers.serialize("json", history), safe=False, status=200)
+        else:
+            return HttpResponse(status=400)
     else:
         return HttpResponse(status=403)

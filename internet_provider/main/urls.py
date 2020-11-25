@@ -16,5 +16,7 @@ urlpatterns = [
     path('create_payment', views.create_payment),
     path('deactivate_tariff', views.deactivate_tariff),
     path('top_up_balance', views.top_up_balance),
+    path('pay_for_tariff', views.pay_for_tariff),
     path('switch_tariff', views.switch_tariff),
+    path('get_payment_history', views.get_payment_history),
 ]

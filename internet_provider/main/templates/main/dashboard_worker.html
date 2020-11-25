@@ -12,7 +12,7 @@
 <body>
     <div style="display: flex; flex-wrap: wrap;">
         <div class="comp">
-            <p class="comp_title">Create tariff</p>
+            <p class="comp_title">Створити тариф</p>
             <form action="create_tariff" method="POST">
                 {% csrf_token %}
 
@@ -32,7 +32,7 @@
         </div>
 
         <div class="comp">
-            <p class="comp_title">Deactivate tariff</p>
+            <p class="comp_title">Деактивувати тариф</p>
             <form action="deactivate_tariff" method="POST">
                 {% csrf_token %}
 
@@ -47,12 +47,12 @@
                     </tbody>
                 </table>
 
-                <input type="submit" value="Deactivate">
+                <input type="submit" value="Деактивувати">
             </form>
         </div>
 
         <div class="comp">
-            <p class="comp_title">Create customer</p>
+            <p class="comp_title">Створити користувача</p>
             <form action="create_customer" method="POST">
                 {% csrf_token %}
 
@@ -72,7 +72,7 @@
         </div>
 
         <div class="comp">
-            <p class="comp_title">Create service</p>
+            <p class="comp_title">Створити сервiс</p>
             <form action="create_service" method="POST">
                 {% csrf_token %}
                 <table style="width: 100%;">
@@ -92,75 +92,75 @@
 
         <div id="customer_info_panel" style="visibility: collapse">
             <div class="comp">
-                <p class="comp_title">Customer info</p>
+                <p class="comp_title">Iнформацiя про користувача</p>
                 <select id="customers" style="padding: 2px 5px; margin-bottom: 5px;" onchange="onCustomerChange()">
                 </select>
                 <div id="customer_info" style="visibility: collapse">
                     <table style="width: 100%;">
-                        <col width="80">
+                        <col width="140">
                         <tr>
-                            <td>Name:</td>
+                            <td>Iм'я:</td>
                             <td><span id="customer_name"></span></td>
                         </tr>
                         <tr>
-                            <td>Address:</td>
+                            <td>Адреса:</td>
                             <td><span id="customer_address"></span></td>
                         </tr>
                         <tr>
-                            <td>Phone:</td>
+                            <td>Телефон:</td>
                             <td><span id="customer_phone"></span></td>
                         </tr>
                         <tr>
-                            <td>Username:</td>
+                            <td>Iм'я користувача:</td>
                             <td><span id="customer_username"></span></td>
                         </tr>
                         <tr>
-                            <td>Balance:</td>
+                            <td>Баланс:</td>
                             <td><span id="customer_balance"></span></td>
                         </tr>
                     </table>
 
                     <div id="customer_services_info"
                         style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
-                        <p style="padding-bottom: 5px; font-size: 1.2rem;">Services</p>
+                        <p style="padding-bottom: 5px; font-size: 1.2rem;">Сервiси</p>
                         <select id="customer_services" onchange="onCustomerServiceChange()">
                         </select>
 
                         <table style="width: 100%;">
-                            <col width="80">
+                            <col width="110">
                             <tr>
-                                <td>Static IP:</td>
+                                <td>Статичний IP:</td>
                                 <td><span id="customer_service_static_ip"></span></td>
                             </tr>
                             <tr>
-                                <td>Traffic:</td>
+                                <td>Трафiк:</td>
                                 <td><span id="customer_service_traffic"></span></td>
                             </tr>
                         </table>
 
                         <div style="margin-top: 5px; padding: 5px; border: 1px solid lightgray; border-radius: 10px;">
-                            <p style="padding-bottom: 3px; font-size: 1.1rem">Tariff</p>
+                            <p style="padding-bottom: 3px; font-size: 1.1rem">Тариф</p>
                             <div id="tariff_info">
                                 <table style="width: 100%;">
                                     <col width="90">
                                     <tr>
-                                        <td>Name:</td>
+                                        <td>Назва:</td>
                                         <td><span id="customer_tariff_name"></span></td>
                                     </tr>
                                     <tr>
-                                        <td>Price:</td>
+                                        <td>Цiна:</td>
                                         <td><span id="customer_tariff_price"></span></td>
                                     </tr>
                                     <tr>
-                                        <td>Speed:</td>
+                                        <td>Швидкiсть:</td>
                                         <td><span id="customer_tariff_speed"></span></td>
                                     </tr>
                                     <tr>
-                                        <td>Limit:</td>
+                                        <td>Лiмiт:</td>
                                         <td><span id="customer_tariff_limit"></span></td>
                                     </tr>
                                     <tr>
-                                        <td>Description:</td>
+                                        <td>Опис:</td>
                                         <td><span id="customer_tariff_desc"></span></td>
                                     </tr>
                                 </table>
@@ -170,8 +170,24 @@
                 </div>
             </div>
         </div>
+        <div class="comp" style="background-color: white">
+            <p style="padding-bottom: 3px; font-size: 1.1rem">Користувачi</p>
+            <div style="display: block; max-height: 300px; overflow-y: auto">
+                <table id="customers_table" class="data_table" style="border-spacing: 0; border-collapse: collapse">
+                    <thead>
+                        <th align="left" width="200px">Iм'я</th>
+                        <th align="left" width="100px">Телефон</th>
+                        <th align="left" width="100px">Баланс</th>
+                        <th align="left" width="200px">Адреса</th>
+                        <th align="left" width="100px">Тариф</th>
+                        <th align="left">Iм'я користувача</th>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
         <form action="logout">
-            <input type="submit" value="Sign out" style="margin: 10px; padding: 2px 5px; height: fit-content">
+            <input type="submit" value="Вийти" style="margin: 10px; padding: 2px 5px; height: fit-content">
         </form>
     </div>
 
