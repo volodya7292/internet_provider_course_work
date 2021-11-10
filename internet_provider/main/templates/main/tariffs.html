@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Джубра &ndash; ваш інтернет</title>
+    <link rel="stylesheet" href="{% static 'main/global.css' %}" />
+    <link rel="stylesheet" href="{% static 'main/index.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <p>ДЖУМБА</p>
+      </div>
+      <div class="content">
+        <div class="controls">
+          <button onclick="location.href='/'">Головна</button>
+          <button onclick="location.href='/dashboard'">
+            Панель управління
+          </button>
+        </div>
+        <div class="tariffs">
+          {% for tariff in tariffs %}
+          <div class="tariff">
+            <table style="width: 100%">
+              <col width="150" />
+              <tr>
+                <td>Назва:</td>
+                <td>{{tariff.name}}</td>
+              </tr>
+              <tr>
+                <td>Плата:</td>
+                <td>{{tariff.price}} ГРН</td>
+              </tr>
+              <tr>
+                <td>Швидкiсть:</td>
+                <td>{{tariff.speed}} Мбіт/с</td>
+              </tr>
+              <tr>
+                <td>Лiмiт:</td>
+                <td>
+                  {% if tariff.limit >= 9999999 %} Безліміт {% else %}
+                  {{tariff.limit}} МБ {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td>Опис:</td>
+                <td>{{tariff.description}}</td>
+              </tr>
+            </table>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

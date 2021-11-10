@@ -9,6 +9,15 @@ from django.contrib.auth.decorators import login_required
 import decimal
 
 
+def index(request):
+    return render(request, 'main/index.html')
+
+
+def tariffs(request):
+    tariffs = Tariff.objects.filter(active=True)
+    return render(request, 'main/tariffs.html', {'tariffs': tariffs})
+
+
 def login(request):
     if request.method == 'POST':
         user = authenticate(

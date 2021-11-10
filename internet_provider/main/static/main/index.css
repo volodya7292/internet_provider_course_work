@@ -1,0 +1,74 @@
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.container {
+    background-image: url("background.jpg");
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 10em;
+    font-weight: bold;
+    color: wheat;
+    text-shadow: #000 0px 0px 4px, #000 0px 0px 4px, #000 0px 0px 4px, #000 0px 0px 4px, #000 0px 0px 4px, #000 0px 0px 4px;
+    letter-spacing: 10px;
+}
+
+.content {
+    display: flex;
+}
+
+.controls {
+    width: 30%;
+    min-width: 450px;
+    max-width: 600px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.controls>button {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 40px;
+    text-align: right;
+    background: linear-gradient(to right, rgb(199, 199, 199), rgb(238, 253, 255));
+    border-left: none;
+    border-right: 1px solid rgb(175, 175, 175);
+    border-top: 1px solid rgb(173, 173, 173);
+    border-bottom: 1px solid rgb(160, 160, 160);
+    box-shadow: 0 0 4px 10px rgba(0, 0, 0, 0.274);
+}
+
+.controls>button:hover {
+    background: linear-gradient(to right, rgb(214, 214, 214), rgb(245, 254, 255));
+    cursor: pointer;
+}
+
+.tariffs {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.tariff {
+    background-color: rgba(240, 248, 255, 0.85);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
