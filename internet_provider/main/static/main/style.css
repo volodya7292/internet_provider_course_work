@@ -58,3 +58,27 @@ hr {
     border: 1px solid #ddd;
     padding: 5px;
 }
+
+.border {
+    padding: 5px;
+    border-left: 1px solid gray;
+    border-radius: 10px;
+}
+
+.comp_bg1 {
+    background-image: url("/static/main/comp1.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.comp_bg2 {
+    background-image: url("/static/main/comp2.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.comp_bg3 {
+    background-image: url("/static/main/comp3.jpg");
+    background-size: cover;
+    background-position: center;
+}
