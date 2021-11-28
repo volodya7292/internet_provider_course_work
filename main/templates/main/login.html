@@ -5,7 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'main/global.css' %}" rel="stylesheet">
     <link href="{% static 'main/style.css' %}" rel="stylesheet">
+    <link href="{% static 'main/login.css' %}" rel="stylesheet">
     <title>Login</title>
     <style>
         .form-group {
@@ -29,18 +31,19 @@
 </head>
 
 <body>
-    <div class="comp"
-        style="position: absolute; margin: auto; top: 0; right: 0; bottom: 0; left: 0; width: 220px; height: 200px">
-        <form method="POST">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="form-group">
-                {{field.label_tag}}
-                {{field}}
-            </div>
-            {% endfor %}
-            <input type="submit" value="Увiйти">
-        </form>
+    <div class="container">
+        <div class="comp">
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {{field.label_tag}}
+                    {{field}}
+                </div>
+                {% endfor %}
+                <input type="submit" value="Увiйти">
+            </form>
+        </div>
     </div>
 </body>
 

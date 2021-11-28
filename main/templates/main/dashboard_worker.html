@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'main/global.css' %}" rel="stylesheet">
+    <link href="{% static 'main/dashboard_worker.css' %}" rel="stylesheet">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div class="container">
+        <div style="display: flex; align-self: flex-start; align-items: center; width: 100%;">
+            <div style="color: white; font-weight: bold; font-size: 24px; margin-left: 20px; margin-bottom: 4px">
+                ДЖУМБА
+            </div>
+            <form action="logout" style="margin-left: auto; margin-right: 20px">
+                <input type="submit" value="Вийти" style="margin: 10px; padding: 2px 5px; height: fit-content">
+            </form>
+        </div>
+        <div class="top">
+            <div class="comp comp_bg1" style="width: 330px; height: 250px;">
+                <p class="comp_title">Створити тариф</p>
+                <form action="create_tariff" method="POST">
+                    {% csrf_token %}
+
+                    <table style="width: 100%;">
+                        <tbody>
+                            {% for field in create_tariff_form %}
+                            <tr>
+                                <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                                <td>{{field}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <input type="submit" value="Create">
+                </form>
+            </div>
+
+            <div class="comp comp_bg3"
+                style="width: 300px; height: 250px; display: flex; flex-direction: column; justify-content: center">
+                <p class="comp_title">Деактивувати тариф</p>
+                <form action="deactivate_tariff" method="POST">
+                    {% csrf_token %}
+
+                    <table style="width: 100%;">
+                        <tbody>
+                            {% for field in deactivate_tariff_form %}
+                            <tr>
+                                <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                                <td>{{field}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <input type="submit" value="Деактивувати">
+                </form>
+            </div>
+
+            <div class="comp comp_bg2"
+                style="width: 330px; height: 250px; display: flex; flex-direction: column; justify-content: center">
+                <p class="comp_title">Створити сервiс</p>
+                <form action="create_service" method="POST">
+                    {% csrf_token %}
+                    <table style="width: 100%;">
+                        <tbody>
+                            {% for field in create_service_form %}
+                            <tr>
+                                <td><span style="margin-right: 10px;">{{field.label_tag}}</span></td>
+                                <td>{{field}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <input type="submit" value="Create">
+                </form>
+            </div>
+        </div>
+        <div class="bottom">
+            <div style="display: flex; ">
+                <div class="comp"
+                    style="background-color: white; width: 770px; height: 100%; border-radius: 10px 0 0 10px">
+                    <p class="comp_title">Користувачi</p>
+                    <div style="display: block; max-height: 300px; overflow-y: auto">
+                        <table id="customers_table" class="data_table"
+                            style="border-spacing: 0; border-collapse: collapse">
+                            <thead>
+                                <th align="left" width="200px">Iм'я</th>
+                                <th align="left" width="100px">Телефон</th>
+                                <th align="left" width="130px">Баланс</th>
+                                <th align="left" width="200px">Адреса</th>
+                                <th align="left" width="100px">Тариф</th>
+                                <th align="left">Iм'я користувача</th>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="comp" style="width: 350px; height: 100%; border-radius: 0 10px 10px 0; min-width: 200px;">
+                    <p class="comp_title">Iнформацiя про користувача</p>
+                    <div id="customer_info" style="visibility: collapse">
+                        <table style="width: 100%;">
+                            <col width="140">
+                            <tr>
+                                <td>Iм'я:</td>
+                                <td><span id="customer_name"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Адреса:</td>
+                                <td><span id="customer_address"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Телефон:</td>
+                                <td><span id="customer_phone"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Iм'я користувача:</td>
+                                <td><span id="customer_username"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Баланс:</td>
+                                <td><span id="customer_balance"></span></td>
+                            </tr>
+                        </table>
+
+                        <div id="customer_services_info" style="margin-top: 5px; ">
+                            <p style="padding-bottom: 5px; font-size: 1.2rem;">Сервiси</p>
+                            <select id="customer_services" onchange="onCustomerServiceChange()">
+                            </select>
+
+                            <table style="width: 100%;">
+                                <col width="110">
+                                <tr>
+                                    <td>Статичний IP:</td>
+                                    <td><span id="customer_service_static_ip"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Трафiк:</td>
+                                    <td><span id="customer_service_traffic"></span></td>
+                                </tr>
+                            </table>
+
+                            <div class="border" style="margin-top: 5px; padding: 5px;">
+                                <p style="padding-bottom: 3px; font-size: 1.1rem">Тариф</p>
+                                <div id="tariff_info">
+                                    <table style="width: 100%;">
+                                        <col width="90">
+                                        <tr>
+                                            <td>Назва:</td>
+                                            <td><span id="customer_tariff_name"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Цiна:</td>
+                                            <td><span id="customer_tariff_price"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Швидкiсть:</td>
+                                            <td><span id="customer_tariff_speed"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Лiмiт:</td>
+                                            <td><span id="customer_tariff_limit"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Опис:</td>
+                                            <td><span id="customer_tariff_desc"></span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comp comp_bg1" style="min-width: 280px; height: 100%;
+                display: flex; flex-direction: column; justify-content: center;">
+                <p class="comp_title">Створити користувача</p>
+                <form action="create_customer" method="POST" style="display: flex; flex-direction: column;">
+                    {% csrf_token %}
+
+                    {% for field in create_customer_form %}
+                    <span style="margin-right: 10px;">{{field.label_tag}}</span>
+                    <div style="width: 100%; padding-bottom: 10px;">{{field}}</div>
+                    {% endfor %}
+
+                    <input type="submit" value="Create" style="width: 80px; align-self: center">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'main/dashboard_worker.js' %}"></script>
+</body>
+
+</html>

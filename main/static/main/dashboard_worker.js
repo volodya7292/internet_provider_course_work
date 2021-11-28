@@ -5,7 +5,7 @@ $.ajax({
     type: 'GET',
     url: "get_customers",
     data: {},
-    success: function (response) {
+    success: async function (response) {
         customers = JSON.parse(response);
         $("#customers").empty();
 
@@ -13,7 +13,7 @@ $.ajax({
             const customer = customers[i];
             var option = $('<option></option>').attr("value", i).text(customer.fields.name);
 
-            $.ajax({
+            await $.ajax({
                 type: 'GET',
                 url: "get_customer_services",
                 data: { "customer_id": customer.pk },
@@ -28,28 +28,32 @@ $.ajax({
                         <td>${customer_services[0].fields.tariff.name}</td>
                         <td>${customer.fields.user[0]}</td>
                     </tr>`);
+
+                    $("#customers_table tr").bind('click', function () {
+                        selectCustomer($(this).index() - 1);
+                    });
                 },
                 error: function (response) {
                     console.log(response)
                 }
             });
 
-            $("#customers").append(option);
-
-            console.log(customer);
+            // $("#customers").append(option);
         }
 
-        if (customers.length > 0) {
-            onCustomerChange();
-        }
+        selectCustomer(0);
+
+        // if (customers.length > 0) {
+        //     onCustomerChange();
+        // }
     },
     error: function (response) {
         console.log(response)
     }
 });
 
-function onCustomerChange() {
-    const obj = customers[document.getElementById("customers").value];
+function selectCustomer(index) {
+    const obj = customers[index];
 
     $("#customer_info_panel").css("visibility", "visible");
     $("#customer_info").css("visibility", "visible");
@@ -60,7 +64,6 @@ function onCustomerChange() {
     $("#customer_username").text(obj.fields.user[0]);
     $("#customer_balance").text(obj.fields.balance + " ГРН");
 
-    $("#customer_services_info").css("visibility", "collapse");
 
     $.ajax({
         type: 'GET',
@@ -79,12 +82,53 @@ function onCustomerChange() {
             if (customer_services.length > 0) {
                 onCustomerServiceChange(customer_services[0]);
                 $("#customer_services_info").css("visibility", "visible");
+            } else {
+                $("#customer_services_info").css("visibility", "collapse");
             }
         },
         error: function (response) {
             console.log(response)
         }
     });
+}
+
+function onCustomerChange() {
+    // const obj = customers[document.getElementById("customers").value];
+
+    // $("#customer_info_panel").css("visibility", "visible");
+    // $("#customer_info").css("visibility", "visible");
+
+    // $("#customer_name").text(obj.fields.name);
+    // $("#customer_address").text(obj.fields.address);
+    // $("#customer_phone").text(obj.fields.phone);
+    // $("#customer_username").text(obj.fields.user[0]);
+    // $("#customer_balance").text(obj.fields.balance + " ГРН");
+
+    // $("#customer_services_info").css("visibility", "collapse");
+
+    // $.ajax({
+    //     type: 'GET',
+    //     url: "get_customer_services",
+    //     data: { "customer_id": obj.pk },
+    //     success: function (response) {
+    //         customer_services = JSON.parse(response);
+    //         $("#customer_services").empty();
+
+    //         for (let i = 0; i < customer_services.length; i++) {
+    //             const service = customer_services[i];
+    //             var option = $('<option></option>').attr("value", i).text(service.fields.address);
+    //             $("#customer_services").append(option);
+    //         }
+
+    //         if (customer_services.length > 0) {
+    //             onCustomerServiceChange(customer_services[0]);
+    //             $("#customer_services_info").css("visibility", "visible");
+    //         }
+    //     },
+    //     error: function (response) {
+    //         console.log(response)
+    //     }
+    // });
 }
 
 function onCustomerServiceChange() {
@@ -99,5 +143,3 @@ function onCustomerServiceChange() {
     const limit = obj.fields.tariff.limit;
     $("#customer_tariff_limit").text(limit >= 9999999 ? "Безлiмiт" : (limit + " МБ"));
 }
-
-
